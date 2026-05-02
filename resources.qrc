@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/fonts/SpaceGrotesk-Bold.ttf</file>
+        <file>assets/fonts/SpaceGrotesk-Regular.ttf</file>
+        <file>assets/ic_launcher_background.xml</file>
+        <file>assets/ic_launcher_foreground.xml</file>
+        <file>assets/icons/ic_add_cover.svg</file>
+        <file>assets/icons/ic_close.svg</file>
+        <file>assets/icons/ic_edit.svg</file>
+        <file>assets/icons/ic_fail.svg</file>
+        <file>assets/icons/ic_left_arrow.svg</file>
+        <file>assets/icons/ic_lyrics.svg</file>
+        <file>assets/icons/ic_next.svg</file>
+        <file>assets/icons/ic_music_note.svg</file>
+        <file>assets/icons/ic_pause.svg</file>
+        <file>assets/icons/ic_play.svg</file>
+        <file>assets/icons/ic_previous.svg</file>
+        <file>assets/icons/ic_repeat.svg</file>
+        <file>assets/icons/ic_search_clear.svg</file>
+        <file>assets/icons/ic_search_close.svg</file>
+        <file>assets/icons/ic_search_open.svg</file>
+        <file>assets/icons/ic_shuffle.svg</file>
+        <file>assets/icons/ic_sort.svg</file>
+        <file>assets/icons/ic_success.svg</file>
+        <file>assets/icons/ic_trash.svg</file>
+        <file>assets/videos/splash_screen_video.mp4</file>
+    </qresource>
+</RCC>
