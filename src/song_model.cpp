@@ -126,30 +126,43 @@ void SongModel::clear()
 
 void SongModel::requestAndroidPermissions()
 {
-    int sdkVersion = QSysInfo::productVersion().split(".").first().toInt();
+    int sdkVersion = QJniObject::getStaticField<jint>(
+        "android/os/Build$VERSION", "SDK_INT"
+        );
+
+    qDebug() << "[Permissions] SDK_INT detected:" << sdkVersion;
+
     QStringList permissions;
 
     if (sdkVersion >= 33)
     {
+        // Android 13+ (API 33+): READ_MEDIA_AUDIO
         permissions << "android.permission.READ_MEDIA_AUDIO";
     }
     else
     {
+        // Android 12 or less
         permissions << "android.permission.READ_EXTERNAL_STORAGE";
-        permissions << "android.permission.WRITE_EXTERNAL_STORAGE";
     }
 
+    bool allGranted = true;
     for (int i=0; i<permissions.size(); ++i)
     {
-        const QString permission = permissions[i];
+        const QString &permission = permissions[i];
         auto r = QtAndroidPrivate::checkPermission(permission).result();
         if (r != QtAndroidPrivate::Authorized)
         {
             r = QtAndroidPrivate::requestPermission(permission).result();
-            if (r != QtAndroidPrivate::Authorized) emit permissionsDenied() ;
+            if (r != QtAndroidPrivate::Authorized)
+            {
+                allGranted = false;
+                emit permissionsDenied();
+            }
         }
     }
-    emit permissionsGranted();
+
+    if (allGranted)
+        emit permissionsGranted();
 }
 
 void SongModel::scanMusicFolder()
