@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QRegularExpression>
 #include <QSysInfo>
+#include <QFileInfo>
 #include <QJniObject>
 #include <QtCore/qcoreapplication.h>
 #include <sys/types.h>
@@ -112,7 +113,7 @@ void MetadataService::updateMetadata(const QString& filePath, const QString& uri
     }
 
     // 3. Check SDK Version
-    int sdkVersion = QSysInfo::productVersion().split(".").first().toInt();
+    int sdkVersion = QJniObject::getStaticField<jint>("android/os/Build$VERSION", "SDK_INT");
     QJniObject activity = QNativeInterface::QAndroidApplication::context();
 
     // Update Metadata for ANDROID 10 (API 29) or less ---
@@ -285,19 +286,23 @@ void MetadataService::updateMetadata(const QString& filePath, const QString& uri
 
             qDebug() << "[MetadataService] MediaStore DB Update:" << (dbSuccess ? "SUCCESSFUL" : "FAILED");
 
-            emit metadataSaved(true, filePath, finalTitle, finalArtist, finalAlbum, mPendingLyricsText, "");
+            if (!mPendingCoverData.isEmpty()) {
                 generatedCoverPath = filePath;
                 generatedCoverPath = QFileInfo(filePath).path() + "/" +
                                      QFileInfo(filePath).completeBaseName() + ".jpg";
+                QFile imageFile(generatedCoverPath);
+                if (imageFile.open(QIODevice::WriteOnly)) {
+                    imageFile.write(mPendingCoverData);
+                    imageFile.close();
+                }
+            }
 
-            mPendingTitleData.reset();
-            mPendingArtistData.reset();
-            mPendingAlbumData.reset();
-            mPendingCoverData.clear();
-            mPendingLyricsText.clear();
+            emit metadataSaved(true, filePath, finalTitle, finalArtist, finalAlbum, mPendingLyricsText, generatedCoverPath);
+            clearPendingData();
         }
         else
         {
+            clearPendingData();
             emit metadataSaved(false, "", "", "", "", "", "");
         }
     }
@@ -371,6 +376,9 @@ void MetadataService::handleActivityResult(int requestCode, int resultCode, cons
 
 void MetadataService::clearPendingData()
 {
+    mPendingTitleData.reset();
+    mPendingArtistData.reset();
+    mPendingAlbumData.reset();
     mPendingCoverData.clear();
     mPendingLyricsText.clear();
     qDebug() << "[MetadataService] Temporary buffers cleared.";
