@@ -380,8 +380,8 @@ void SongModel::deleteSong(const QString &filePath)
             if (file.remove()) {
                 qDebug() << "File rimosso dal filesystem:" << filePath;
 
-                QString coverPath = filePath;
-                coverPath.replace(".mp3", ".jpg", Qt::CaseInsensitive);
+                QString coverPath = QFileInfo(filePath).path() + "/" +
+                                    QFileInfo(filePath).completeBaseName() + ".jpg";
                 QFile::remove(coverPath);
             }
 

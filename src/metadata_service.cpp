@@ -139,8 +139,8 @@ void MetadataService::updateMetadata(const QString& filePath, const QString& uri
                 tag->addFrame(frame);
 
                 generatedCoverPath = filePath;
-                generatedCoverPath.replace(QRegularExpression("\\.mp3$", QRegularExpression::CaseInsensitiveOption), ".jpg");
-
+                generatedCoverPath = QFileInfo(filePath).path() + "/" +
+                                     QFileInfo(filePath).completeBaseName() + ".jpg";
                 QFile imageFile(generatedCoverPath);
                 if (imageFile.open(QIODevice::WriteOnly)) {
                     imageFile.write(mPendingCoverData);
@@ -286,6 +286,9 @@ void MetadataService::updateMetadata(const QString& filePath, const QString& uri
             qDebug() << "[MetadataService] MediaStore DB Update:" << (dbSuccess ? "SUCCESSFUL" : "FAILED");
 
             emit metadataSaved(true, filePath, finalTitle, finalArtist, finalAlbum, mPendingLyricsText, "");
+                generatedCoverPath = filePath;
+                generatedCoverPath = QFileInfo(filePath).path() + "/" +
+                                     QFileInfo(filePath).completeBaseName() + ".jpg";
 
             mPendingTitleData.reset();
             mPendingArtistData.reset();

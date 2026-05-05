@@ -47,8 +47,12 @@ public class MediaStoreReader {
                     while (cursor.moveToNext()) {
                         String filePath = cursor.getString(pathCol);
 
-                        if (filePath == null || !filePath.toLowerCase().endsWith(".mp3")) continue;
-                        if (!filePath.contains("/Music/")) continue;
+                        if (filePath == null) continue;
+                        String lower = filePath.toLowerCase();
+                        if (!lower.endsWith(".mp3") && !lower.endsWith(".flac") &&
+                            !lower.endsWith(".aac") && !lower.endsWith(".m4a") &&
+                            !lower.endsWith(".ogg") && !lower.endsWith(".opus") &&
+                            !lower.endsWith(".wav") && !lower.endsWith(".wma")) continue;
 
                         long id = cursor.getLong(idCol);
                         SongInfo song = new SongInfo();
