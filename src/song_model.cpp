@@ -138,11 +138,19 @@ void SongModel::requestAndroidPermissions()
     {
         // Android 13+ (API 33+): READ_MEDIA_AUDIO
         permissions << "android.permission.READ_MEDIA_AUDIO";
+        permissions << "android.permission.MANAGE_MEDIA";
+    }
+    else if (sdkVersion >= 30)
+    {
+        // Android 11-12 (API 30-32)
+        permissions << "android.permission.READ_EXTERNAL_STORAGE";
+        permissions << "android.permission.MANAGE_MEDIA";
     }
     else
     {
-        // Android 12 or less
+        // Android 10 and below (API <= 29)
         permissions << "android.permission.READ_EXTERNAL_STORAGE";
+        permissions << "android.permission.WRITE_EXTERNAL_STORAGE";
     }
 
     bool allGranted = true;
